@@ -104,6 +104,5 @@ var model = {
         // Swap in new table data
         var oldTableData = document.getElementsByTagName('tbody')[0];
         oldTableData.parentNode.replaceChild(newTbody, oldTableData);
-
     }
 };
