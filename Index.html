@@ -7,7 +7,7 @@
     <script src="JS/model.js"></script>
 </head>
 
-<body>
+<body onload="model.update()">
     <div id="myTeam">
         <h3>My Team Details</h3>
         <label>Size</label><input id="fSize" type="number" onchange="model.update()" value='4' />
@@ -23,7 +23,7 @@
     <div id="results">
         <h3>Battle results</h3>
         <p id="banner"></p>
-        <!--<table>
+        <table>
             <thead>
                 <th>Team</th>
                 <th>Time (sec)</th>
@@ -32,7 +32,7 @@
                 <td>Friendly</td>
                 <td>1</td>
             </tbody>
-        </table>-->
+        </table>
     </div>
 </body>
 
