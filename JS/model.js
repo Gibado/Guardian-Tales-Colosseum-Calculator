@@ -13,12 +13,54 @@ var model = {
         var fTeam = this.friendlyTeam.clone();
         var eTeam = this.enemyTeam.clone();
 
-        var fWinSpeed = eTeam.toughness() / fTeam.dps();
-        var eWinSpeed = fTeam.toughness() / eTeam.dps();
+        var deadList = [];
+        while (fTeam.size() != 0 && eTeam.size() != 0) {
+            deadList.push(this.deathBattle(fTeam, eTeam));
+        }
+
+        var totalTime = 0;
+        for (var i = 0; i < deadList.length; i++) {
+            totalTime += deadList[i].timeSpent;
+        }
 
         return {
-            name: fWinSpeed < eWinSpeed ? 'friendly team' : 'enemy team',
-            speed: fWinSpeed < eWinSpeed ? fWinSpeed : eWinSpeed
+            name: fTeam.size() > 0 ? 'friendly team' : 'enemy team',
+            speed: totalTime,
+            deadList: deadList
+        };
+    },
+
+    // Updates 2 teams with damage until 1 unit dies on either team
+    // Returns the name of the team with a loss and how much time passed
+    deathBattle: function(teamA, teamB) {
+        // Find how fast the 1st unit on each team will die
+        var aDeathSpeed = teamA.units[0].toughness / teamB.dps();
+        var bDeathSpeed = teamB.units[0].toughness / teamA.dps();
+
+        var teamWithLoss, otherTeam, timeSpent, teamAlost;
+        if (aDeathSpeed < bDeathSpeed) {
+            // Unit on teamA dies 1st
+            teamWithLoss = teamA;
+            teamAlost = true;
+            otherTeam = teamB;
+            timeSpent = aDeathSpeed;
+        } else {
+            // Unit on teamB dies 1st
+            teamWithLoss = teamB;
+            teamAlost = false;
+            otherTeam = teamA;
+            timeSpent = bDeathSpeed;
+        }
+
+        // Assign damage to other team 1st
+        var damagedUnit = otherTeam.units[0];
+        damagedUnit.toughness -= teamWithLoss.dps() * timeSpent;
+        // Remove dead unit from team with loss
+        teamWithLoss.units.shift();
+
+        return {
+            teamAlost: teamAlost,
+            timeSpent: timeSpent
         };
     },
 
@@ -32,6 +74,8 @@ var model = {
 
     // Updates the page with battle results
     updateResults: function(results) {
-        document.getElementById('banner').textContent = 'The winner is ' + results.name + ' in ' + results.speed + ' seconds!';
+        document.getElementById('banner').textContent = 'The winner is ' + results.name + ' in ' + results.speed.toFixed(2) + ' seconds!';
+
+        // TODO Update death table
     }
 };
