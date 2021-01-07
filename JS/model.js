@@ -74,8 +74,36 @@ var model = {
 
     // Updates the page with battle results
     updateResults: function(results) {
+        // Update result banner
         document.getElementById('banner').textContent = 'The winner is ' + results.name + ' in ' + results.speed.toFixed(2) + ' seconds!';
 
-        // TODO Update death table
+        // Update death table
+
+        // Create new table data
+        var newTbody = document.createElement('tbody');
+        var deathlist = results.deadList;
+        var friendlyDeathCount = 0;
+        var enemyDeathCount = 0;
+        var currentTime = 0;
+        for (var i = 0; i < deathlist.length; i++) {
+            var row = newTbody.insertRow();
+            var cell = row.insertCell();
+            if (deathlist[i].teamAlost) {
+                // friendly team died
+                cell.innerHTML = "<b>Friendly " + ++friendlyDeathCount + "</b>";
+            } else {
+                // enemy team died
+                cell.innerText = "Enemy " + ++enemyDeathCount;
+            }
+
+            cell = row.insertCell();
+            currentTime += deathlist[i].timeSpent
+            cell.innerText = currentTime.toFixed(2);
+        }
+
+        // Swap in new table data
+        var oldTableData = document.getElementsByTagName('tbody')[0];
+        oldTableData.parentNode.replaceChild(newTbody, oldTableData);
+
     }
 };
